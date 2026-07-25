@@ -33,3 +33,13 @@ class SafeQuantizeSTE(torch.autograd.Function):
 
 def quantize_ste(x, num_bits=4):
     return SafeQuantizeSTE.apply(x, num_bits)
+
+
+def freeze_model(model):
+    for param in model.parameters():
+        param.requires_grad = False
+
+
+def unfreeze_model(model):
+    for param in model.parameters():
+        param.requires_grad = True

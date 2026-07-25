@@ -13,7 +13,12 @@ dask.config.set(
 
 from data import *
 from models import *
-from train import train_model, save_model, load_model
+from autoencoder import (
+    train_autoencoder,
+    save_autoencoder,
+    load_autoencoder,
+)
+from latentmodel import train_latent_predictor, save_latent, load_latent
 
 ds = get_dataset025()
 
@@ -29,6 +34,9 @@ optimizer = optim.Adam(list(encoder.parameters()) + list(decoder.parameters()), 
 
 criterion = nn.SmoothL1Loss(beta=1.0)
 
-encoder, decoder = load_model("weights", device)
+encoder, decoder = load_autoencoder("weights", device)
 
-save_model(encoder, decoder)
+save_autoencoder(encoder, decoder)
+
+latent = LatentPredictor()
+latent = load_latent("weights", device)

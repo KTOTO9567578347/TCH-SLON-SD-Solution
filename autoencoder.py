@@ -7,7 +7,7 @@ import os, datetime
 from models import EncoderWithQuantization, Decoder
 
 
-def train_model(device, encoder, decoder, optimizer, criterion, n_epochs):
+def train_autoencoder(device, encoder, decoder, optimizer, criterion, n_epochs):
     encoder.train()
     decoder.train()
 
@@ -44,7 +44,7 @@ def train_model(device, encoder, decoder, optimizer, criterion, n_epochs):
     return encoder, decoder
 
 
-def save_model(encoder, decoder):
+def save_autoencoder(encoder, decoder):
     dirname = f"weights_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}"
     print(f"Сохранение модели в {dirname}")
     os.mkdir(f"checkpoints/{dirname}")
@@ -53,7 +53,7 @@ def save_model(encoder, decoder):
     torch.save(decoder.state_dict(), f"./checkpoints/{dirname}/decoder.pt")
 
 
-def load_model(dirname, device):
+def load_autoencoder(dirname, device):
     print(f"Загрузка модели из {dirname}")
     encoder = EncoderWithQuantization().to(device)
     encoder.load_state_dict(
