@@ -64,21 +64,15 @@ class WeatherAutoencoderLoader:
         return len(self.bgen)
 
 
-def get_batch_generator(device):
-    dask.config.set(
-        scheduler="threads", num_workers=4
-    )  # Настраиваем dask на параллельную фоновую загрузку через потоки (threads)
-
-    print("Загрузка датасета 0.25*")
-    ds025 = get_dataset025()
-
+def get_batch_generator(ds, device):
     print("Создание батчгенератора")
     return xb.BatchGenerator(
-        ds025,
+        ds,
         input_dims={"time": 8, "latitude": 128, "longitude": 128},
         input_overlap={"time": 0, "latitude": 0, "longitude": 0},
         preload_batch=True,
     )
+
 
 def get_loader(bgen, means_dict, stds_dict, device):
     print("Создание даталоадера")
