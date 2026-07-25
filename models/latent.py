@@ -33,12 +33,3 @@ class LatentPredictor(nn.Module):
         z = self.activation(self.bn3(self.conv3(z)))
         z = self.conv4(z)
         return z
-
-
-def count_parameters(model):
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
-
-
-if __name__ == "__main__":
-    predictor = LatentPredictor(latent_channels=14, hidden_channels=32)
-    print(f"Параметров: {count_parameters(predictor):,}")
