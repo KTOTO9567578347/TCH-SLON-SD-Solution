@@ -13,7 +13,7 @@ dask.config.set(
 
 from data import *
 from models import *
-from train import train_model, save_model
+from train import train_model, save_model, load_model
 
 ds = get_dataset025()
 
@@ -22,14 +22,13 @@ loader = get_loader(bgen, *get_precomputed_stats(), device)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-encoder = EncoderWithQuantization(latent_channels=14).to(device)
-decoder = Decoder(latent_channels=14).to(device)
+encoder = EncoderWithQuantization().to(device)
+decoder = Decoder().to(device)
 
-optimizer = optim.Adam(
-    list(encoder.parameters()) + list(decoder.parameters()),
-    lr=1e-3
-)
+optimizer = optim.Adam(list(encoder.parameters()) + list(decoder.parameters()), lr=1e-3)
 
 criterion = nn.SmoothL1Loss(beta=1.0)
+
+encoder, decoder = load_model("weights", device)
 
 save_model(encoder, decoder)

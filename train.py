@@ -4,11 +4,14 @@ from tqdm import tqdm
 
 import os, datetime
 
+from models import EncoderWithQuantization, Decoder
+
+
 def train_model(device, encoder, decoder, optimizer, criterion, n_epochs):
     encoder.train()
     decoder.train()
 
-    print(f"Запуск тестового цикла на устройстве: {device}")
+    print(f"Запуск тестового цикла на устройстве: {device} на {n_epochs} эпох")
     losses = []
     i = 0
 
@@ -33,7 +36,7 @@ def train_model(device, encoder, decoder, optimizer, criterion, n_epochs):
             print(" -", sum(losses) / len(losses))
 
         i += 1
-        
+
         if i == n_epochs:
             break
 
@@ -43,7 +46,25 @@ def train_model(device, encoder, decoder, optimizer, criterion, n_epochs):
 
 def save_model(encoder, decoder):
     dirname = f"weights_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}"
-    os.mkdir(dirname)
+    print(f"Сохранение модели в {dirname}")
+    os.mkdir(f"checkpoints/{dirname}")
 
-    torch.save(encoder.state_dict(), f"./{dirname}/encoder.pt")
-    torch.save(decoder.state_dict(), f"./{dirname}/decoder.pt")
+    torch.save(encoder.state_dict(), f"./checkpoints/{dirname}/encoder.pt")
+    torch.save(decoder.state_dict(), f"./checkpoints/{dirname}/decoder.pt")
+
+
+def load_model(dirname, device):
+    print(f"Загрузка модели из {dirname}")
+    encoder = EncoderWithQuantization().to(device)
+    encoder.load_state_dict(
+        torch.load(f"./checkpoints/{dirname}/encoder.pt", weights_only=True)
+    )
+    encoder.eval()
+
+    decoder = Decoder().to(device)
+    decoder.load_state_dict(
+        torch.load(f"./checkpoints/{dirname}/decoder.pt", weights_only=True)
+    )
+    decoder.eval()
+
+    return encoder, decoder
